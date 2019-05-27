@@ -1,0 +1,73 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define MAX 105
+int pai[MAX];
+int custo[MAX];
+
+int passou(int c){
+    //cout << "passou passou" << endl;
+    if(pai[c] == c) return c;
+    return pai[c] = passou(pai[c]);
+}
+
+bool ok(int c1, int c2){
+    c1 = passou(c1);
+    c2 = passou(c2);
+    //cout << "passou ok" << endl;
+    if(c1 == c2) return false;
+    if(custo[c1] > custo[c2]) swap(c1,c2);
+    pai[c1] = c2;
+    if(custo[c1] == custo[c2]) custo[c2]++;
+    return true;
+}
+
+int main(){
+    int n, f, r;
+    int u, v, w;
+
+    cin >> n >> f >> r;
+
+    vector <pair <int, pair< int, int> > > ferrovias;
+    vector <pair <int, pair< int, int> > > rodovias;
+    vector <pair <int, pair< int, int> > > caminhos;
+
+    for(int i = 0; i < n; i++) pai[i] = i;
+
+    for(int i = 0; i < f; i++){
+        cin >> u >> v >> w;
+        u--;
+        v--;
+        ferrovias.push_back(make_pair(w , make_pair(u,v)));
+    }
+    sort(ferrovias.begin(), ferrovias.end());
+
+    for(int i = 0; i < r; i++){
+        cin >> u >> v >> w;
+        u--;
+        v--;
+        rodovias.push_back(make_pair(w , make_pair(u,v)));
+    }
+
+    sort(rodovias.begin(), rodovias.end());
+
+    for(int i = 0; i < f; i++) caminhos.push_back(ferrovias[i]);
+
+    for(int i = 0; i < r; i++) caminhos.push_back(rodovias[i]);
+
+    int custoTotal = 0;
+
+    //cout << "o tamanho de caminhos eh " << caminhos.size() << endl;
+
+
+    for (int i = 0; (int)i < caminhos.size(); i++) {
+        int c1 = caminhos[i].second.first;
+        int c2 = caminhos[i].second.second;
+        int peso = caminhos[i].first;
+        //cout << "para i = " << i << " (c1,c2) = " << c1 << " " << c2 << endl;
+        if (ok(c1, c2)) {
+          custoTotal += peso;
+        }
+  }
+  cout << custoTotal << endl;
+
+}
